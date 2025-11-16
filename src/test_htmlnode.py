@@ -1,13 +1,26 @@
 import unittest
 
 from htmlnode import HTMLNode
+from htmlnode import LeafNode
 
+TEST_PROPS = [
+    ("href", "https://www.google.com"),
+    ("target", "_blank")
+]
+TEST_TAGS = [
+    "a",
+    "p"
+]
+TEST_VALUES = [
+    "test string",
+    ""
+]
 
 class TestHTMLNode(unittest.TestCase):
-    HREF_STRING = "href"
-    TEST_URL = "https://www.google.com"
-    TARGET_STRING = "target"
-    TEST_TARGET = "_blank"
+
+    def test_to_html_error(self):
+        node = HTMLNode()
+        self.assertRaises(NotImplementedError)
 
     def test_default_props(self):
         node = HTMLNode()
@@ -20,29 +33,50 @@ class TestHTMLNode(unittest.TestCase):
     
     def test_one_prop(self):
         test_props = {
-            self.HREF_STRING: self.TEST_URL
+            TEST_PROPS[0][0]: TEST_PROPS[0][1]
         }
-        test_output = f" {self.HREF_STRING}=\"{self.TEST_URL}\""
+        test_output = f" {TEST_PROPS[0][0]}=\"{TEST_PROPS[0][1]}\""
         node = HTMLNode(props=test_props)
         self.assertEqual(node.props_to_html(), test_output)
 
     def test_multiple_props(self):
         test_props = {
-            self.HREF_STRING: self.TEST_URL,
-            self.TARGET_STRING: self.TEST_TARGET
+            TEST_PROPS[0][0]: TEST_PROPS[0][1],
+            TEST_PROPS[1][0]: TEST_PROPS[1][1]
         }
-        test_output = f" {self.HREF_STRING}=\"{self.TEST_URL}\" {self.TARGET_STRING}=\"{self.TEST_TARGET}\""
+        test_output = f" {TEST_PROPS[0][0]}=\"{TEST_PROPS[0][1]}\" {TEST_PROPS[1][0]}=\"{TEST_PROPS[1][1]}\""
         node = HTMLNode(props=test_props)
         self.assertEqual(node.props_to_html(), test_output)
 
     def test_prop_with_empty_string(self):
         test_props = {
-            self.HREF_STRING: "",
-            self.TARGET_STRING: ""
+            TEST_PROPS[0][0]: "",
+            TEST_PROPS[1][0]: ""
         }
-        test_output = f" {self.HREF_STRING}=\"\" {self.TARGET_STRING}=\"\""
+        test_output = f" {TEST_PROPS[0][0]}=\"\" {TEST_PROPS[1][0]}=\"\""
         node = HTMLNode(props=test_props)
         self.assertEqual(node.props_to_html(), test_output)
+
+class TestLeafNode(unittest.TestCase):
+    def test_no_children(self):
+        node = LeafNode(TEST_TAGS[0], TEST_VALUES[0])
+        self.assertEqual(node.children, None)
+
+    def test_tags(self):
+        for tag in TEST_TAGS:
+            self.tag_test(tag)
+
+    def tag_test(self, tag):
+        node = LeafNode(tag, TEST_VALUES[0])
+        self.assertEqual(node.to_html(), f"<{tag}>{TEST_VALUES[0]}</{tag}>")
+    
+    def test_to_html_with_props(self):
+        test_props = {
+            TEST_PROPS[0][0]: TEST_PROPS[0][1],
+            TEST_PROPS[1][0]: TEST_PROPS[1][1]
+        }
+        node = LeafNode(TEST_TAGS[0], TEST_VALUES[0], test_props)
+        self.assertEqual(node.to_html(), f"<{TEST_TAGS[0]} {TEST_PROPS[0][0]}=\"{TEST_PROPS[0][1]}\" {TEST_PROPS[1][0]}=\"{TEST_PROPS[1][1]}\">{TEST_VALUES[0]}</{TEST_TAGS[0]}>")
 
 
 if __name__ == "__main__":
