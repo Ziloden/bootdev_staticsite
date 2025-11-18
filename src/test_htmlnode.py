@@ -2,6 +2,7 @@ import unittest
 
 from htmlnode import HTMLNode
 from htmlnode import LeafNode
+from htmlnode import ParentNode
 
 TEST_PROPS = [
     ("href", "https://www.google.com"),
@@ -20,7 +21,8 @@ class TestHTMLNode(unittest.TestCase):
 
     def test_to_html_error(self):
         node = HTMLNode()
-        self.assertRaises(NotImplementedError)
+        with self.assertRaises(NotImplementedError):
+            node.to_html()
 
     def test_default_props(self):
         node = HTMLNode()
@@ -70,6 +72,11 @@ class TestLeafNode(unittest.TestCase):
         node = LeafNode(tag, TEST_VALUES[0])
         self.assertEqual(node.to_html(), f"<{tag}>{TEST_VALUES[0]}</{tag}>")
     
+    def test_missing_value_error(self):
+        node = LeafNode(TEST_TAGS[0], None)
+        with self.assertRaises(ValueError):
+            node.to_html()
+
     def test_to_html_with_props(self):
         test_props = {
             TEST_PROPS[0][0]: TEST_PROPS[0][1],
@@ -78,6 +85,51 @@ class TestLeafNode(unittest.TestCase):
         node = LeafNode(TEST_TAGS[0], TEST_VALUES[0], test_props)
         self.assertEqual(node.to_html(), f"<{TEST_TAGS[0]} {TEST_PROPS[0][0]}=\"{TEST_PROPS[0][1]}\" {TEST_PROPS[1][0]}=\"{TEST_PROPS[1][1]}\">{TEST_VALUES[0]}</{TEST_TAGS[0]}>")
 
+class TestParentNode(unittest.TestCase):
+    def test_no_children_error(self):
+        node = ParentNode(TEST_TAGS[0], None)
+        with self.assertRaises(ValueError):
+            node.to_html()
+    
+    def test_no_tag_error(self):
+        node = ParentNode(None, None)
+        with self.assertRaises(ValueError):
+            node.to_html()
+
+    def test_to_html_with_children(self):
+        child_node = LeafNode("span", "child")
+        parent_node = ParentNode("div", [child_node])
+        self.assertEqual(parent_node.to_html(), "<div><span>child</span></div>")
+
+    def test_to_html_with_grandchildren(self):
+        grandchild_node = LeafNode("b", "grandchild")
+        child_node = ParentNode("span", [grandchild_node])
+        parent_node = ParentNode("div", [child_node])
+        self.assertEqual(
+            parent_node.to_html(),
+            "<div><span><b>grandchild</b></span></div>",
+        )
+
+    # def test_tags(self):
+    #     for tag in TEST_TAGS:
+    #         self.tag_test(tag)
+
+    # def tag_test(self, tag):
+    #     node = LeafNode(tag, TEST_VALUES[0])
+    #     self.assertEqual(node.to_html(), f"<{tag}>{TEST_VALUES[0]}</{tag}>")
+    
+    # def test_missing_value_error(self):
+    #     node = LeafNode(TEST_TAGS[0], None)
+    #     with self.assertRaises(ValueError):
+    #         node.to_html()
+            
+    # def test_to_html_with_props(self):
+    #     test_props = {
+    #         TEST_PROPS[0][0]: TEST_PROPS[0][1],
+    #         TEST_PROPS[1][0]: TEST_PROPS[1][1]
+    #     }
+    #     node = LeafNode(TEST_TAGS[0], TEST_VALUES[0], test_props)
+    #     self.assertEqual(node.to_html(), f"<{TEST_TAGS[0]} {TEST_PROPS[0][0]}=\"{TEST_PROPS[0][1]}\" {TEST_PROPS[1][0]}=\"{TEST_PROPS[1][1]}\">{TEST_VALUES[0]}</{TEST_TAGS[0]}>")
 
 if __name__ == "__main__":
     unittest.main()
