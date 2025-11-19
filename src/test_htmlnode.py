@@ -110,26 +110,5 @@ class TestParentNode(unittest.TestCase):
             "<div><span><b>grandchild</b></span></div>",
         )
 
-    # def test_tags(self):
-    #     for tag in TEST_TAGS:
-    #         self.tag_test(tag)
-
-    # def tag_test(self, tag):
-    #     node = LeafNode(tag, TEST_VALUES[0])
-    #     self.assertEqual(node.to_html(), f"<{tag}>{TEST_VALUES[0]}</{tag}>")
-    
-    # def test_missing_value_error(self):
-    #     node = LeafNode(TEST_TAGS[0], None)
-    #     with self.assertRaises(ValueError):
-    #         node.to_html()
-            
-    # def test_to_html_with_props(self):
-    #     test_props = {
-    #         TEST_PROPS[0][0]: TEST_PROPS[0][1],
-    #         TEST_PROPS[1][0]: TEST_PROPS[1][1]
-    #     }
-    #     node = LeafNode(TEST_TAGS[0], TEST_VALUES[0], test_props)
-    #     self.assertEqual(node.to_html(), f"<{TEST_TAGS[0]} {TEST_PROPS[0][0]}=\"{TEST_PROPS[0][1]}\" {TEST_PROPS[1][0]}=\"{TEST_PROPS[1][1]}\">{TEST_VALUES[0]}</{TEST_TAGS[0]}>")
-
 if __name__ == "__main__":
     unittest.main()
