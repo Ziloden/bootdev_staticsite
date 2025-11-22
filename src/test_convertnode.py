@@ -1,10 +1,7 @@
 import unittest
 
-from htmlnode import HTMLNode
-from htmlnode import LeafNode
-from htmlnode import ParentNode
-from textnode import TextNode
-from textnode import TextType
+from htmlnode import HTMLNode, LeafNode, ParentNode
+from textnode import TextNode, TextType
 
 from convertnode import text_node_to_html_node
 

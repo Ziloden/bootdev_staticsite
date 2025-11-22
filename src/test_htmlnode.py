@@ -1,8 +1,6 @@
 import unittest
 
-from htmlnode import HTMLNode
-from htmlnode import LeafNode
-from htmlnode import ParentNode
+from htmlnode import HTMLNode, LeafNode, ParentNode
 
 TEST_PROPS = [
     ("href", "https://www.google.com"),
