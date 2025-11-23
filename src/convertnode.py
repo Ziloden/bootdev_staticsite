@@ -37,3 +37,12 @@ def text_to_text_nodes(text):
         nodes = split_nodes_delimiter(nodes, delimeter, text_type)
     
     return nodes
+
+def markdown_to_blocks(markdown):
+    split_markdown = markdown.split("\n\n")
+    blocks = []
+    for block in split_markdown:
+        if block == "":
+            continue
+        blocks.append(block.strip())
+    return blocks
