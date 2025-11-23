@@ -21,7 +21,7 @@ class TestMarkdownImages(unittest.TestCase):
     
     def test_extract_markdown_images_skips_links(self):
         matches = extract_markdown_images(
-            "This is text with an ![image](https://i.imgur.com/zjjcJKZ.png), ![rick roll](https://i.imgur.com/aKaOqIh.gif), and a linkt [to boot dev](https://www.boot.dev)"
+            "This is text with an ![image](https://i.imgur.com/zjjcJKZ.png), ![rick roll](https://i.imgur.com/aKaOqIh.gif), and a link [to boot dev](https://www.boot.dev)"
         )
         self.assertListEqual([
             ("image", "https://i.imgur.com/zjjcJKZ.png"),
