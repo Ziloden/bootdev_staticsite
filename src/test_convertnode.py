@@ -3,7 +3,7 @@ import unittest
 from htmlnode import HTMLNode, LeafNode, ParentNode
 from textnode import TextNode, TextType
 
-from convertnode import text_node_to_html_node, text_to_text_nodes, markdown_to_blocks
+from convertnode import text_node_to_html_node, text_to_text_nodes
 
 class TestConvertNode(unittest.TestCase):
     def test_invalid_type_error(self):
@@ -65,73 +65,5 @@ class TestConvertTextToTextNodes(unittest.TestCase):
                 TextNode("obi wan image", TextType.IMAGE, "https://i.imgur.com/fJRm4Vk.jpeg"),
                 TextNode(" and a ", TextType.TEXT),
                 TextNode("link", TextType.LINK, "https://boot.dev"),
-            ],
-        )
-
-class TestConvertMarkdownToBlocks(unittest.TestCase):
-    def test_markdown_to_blocks(self):
-        md = """
-This is **bolded** paragraph
-
-This is another paragraph with _italic_ text and `code` here
-This is the same paragraph on a new line
-
-- This is a list
-- with items
-"""
-        blocks = markdown_to_blocks(md)
-        self.assertEqual(
-            blocks,
-            [
-                "This is **bolded** paragraph",
-                "This is another paragraph with _italic_ text and `code` here\nThis is the same paragraph on a new line",
-                "- This is a list\n- with items",
-            ],
-        )
-
-    def test_markdown_to_blocks_removes_empty_blocks(self):
-        md = """
-This is **bolded** paragraph
-
-This is another paragraph with _italic_ text and `code` here
-This is the same paragraph on a new line
-
-
-
-
-
-
-
-
-- This is a list
-- with items
-"""
-        blocks = markdown_to_blocks(md)
-        self.assertEqual(
-            blocks,
-            [
-                "This is **bolded** paragraph",
-                "This is another paragraph with _italic_ text and `code` here\nThis is the same paragraph on a new line",
-                "- This is a list\n- with items",
-            ],
-        )
-
-    def test_markdown_to_blocks_cleans_up_whitespace(self):
-        md = """
-This is **bolded** paragraph with trailing whitespace          
-
-This is another paragraph with _italic_ text and `code` here
-This is the same paragraph on a new line
-
-- This is a list
-- with items
-"""
-        blocks = markdown_to_blocks(md)
-        self.assertEqual(
-            blocks,
-            [
-                "This is **bolded** paragraph with trailing whitespace",
-                "This is another paragraph with _italic_ text and `code` here\nThis is the same paragraph on a new line",
-                "- This is a list\n- with items",
             ],
         )
