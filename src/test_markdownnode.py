@@ -154,3 +154,30 @@ class TestBlockToBlockType(unittest.TestCase):
         block = "- I am\n- an unordered\n list"
         block_type = block_to_block_type(block)
         self.assertEqual(block_type, BlockType.PARAGRAPH)
+
+# Ordered List Block Tests
+
+    def test_ordered_list_block_single_line(self):
+        block = "1. I am an ordered list"
+        block_type = block_to_block_type(block)
+        self.assertEqual(block_type, BlockType.ORDERED_LIST)
+
+    def test_ordered_list_block_multiline(self):
+        block = "1. I am\n2. an ordered\n3. list"
+        block_type = block_to_block_type(block)
+        self.assertEqual(block_type, BlockType.ORDERED_LIST)
+    
+    def test_ordered_list_block_is_paragraph_line_missing_number(self):
+        block = "1. I am\n2. an ordered\n list"
+        block_type = block_to_block_type(block)
+        self.assertEqual(block_type, BlockType.PARAGRAPH)
+
+    def test_ordered_list_block_is_paragraph_line_missing_period(self):
+        block = "1. I am\n2. an ordered\n3, list"
+        block_type = block_to_block_type(block)
+        self.assertEqual(block_type, BlockType.PARAGRAPH)
+
+    def test_ordered_list_block_is_paragraph_line_out_of_order(self):
+        block = "1. I am\n2. an ordered\n4. list"
+        block_type = block_to_block_type(block)
+        self.assertEqual(block_type, BlockType.PARAGRAPH)

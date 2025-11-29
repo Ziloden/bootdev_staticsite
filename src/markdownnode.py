@@ -29,4 +29,16 @@ def block_to_block_type(block):
     for regex, block_type in match_types.items():
         if re.fullmatch(regex, block):
             return block_type
+    if ordered_list_block_matcher(block):
+        return BlockType.ORDERED_LIST
     return BlockType.PARAGRAPH
+
+def ordered_list_block_matcher(block):
+    current_list_index = 1
+    lines = block.split("\n")
+    for line in lines:
+        if re.match(f"{current_list_index}\. ", line):
+            current_list_index += 1
+            continue
+        return False
+    return True
