@@ -12,7 +12,7 @@ def split_nodes_delimiter(old_nodes, delimiter, text_type):
         # If the delimeter count is odd then we have a delimeter with no
         # matching delimeter closing it.
         if old_node.text.count(delimiter) % 2 != 0:
-            raise ValueError("Missing closing delimiter.")
+            raise ValueError(f"Missing closing delimiter: {old_node.text}")
 
         split_nodes = []
         split_string = old_node.text.split(delimiter)

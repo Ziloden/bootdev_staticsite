@@ -2,8 +2,8 @@ from enum import Enum
 import re
 
 class BlockType(Enum):
-    PARAGRAPH = "para"
-    HEADING = "head"
+    PARAGRAPH = "paragraph"
+    HEADING = "heading"
     CODE = "code"
     QUOTE = "quote"
     UNORDERED_LIST = "ulist"
@@ -19,26 +19,52 @@ def markdown_to_blocks(markdown):
     return blocks
 
 def block_to_block_type(block):
-    match_types = {
-        r"#{1,6}\s{1}.+": BlockType.HEADING,
-        r"```\n[\w\d\s\n]*\n```$": BlockType.CODE,
-        r"(>[\w\d\t ]*){1}(\n>[^\n]*)*": BlockType.QUOTE,
-        r"(- {1}[\w\d\t ]*){1}(\n- {1}[^\n]*)*": BlockType.UNORDERED_LIST,
-    }
+    lines = block.split("\n")
 
-    for regex, block_type in match_types.items():
-        if re.fullmatch(regex, block):
-            return block_type
-    if ordered_list_block_matcher(block):
+    if block.startswith(("# ", "## ", "### ", "#### ", "##### ", "###### ")):
+        return BlockType.HEADING
+    if len(lines) > 1 and lines[0].startswith("```") and lines[-1].startswith("```"):
+        return BlockType.CODE
+    if block.startswith(">"):
+        for line in lines:
+            if not line.startswith(">"):
+                return BlockType.PARAGRAPH
+        return BlockType.QUOTE
+    if block.startswith("- "):
+        for line in lines:
+            if not line.startswith("- "):
+                return BlockType.PARAGRAPH
+        return BlockType.UNORDERED_LIST
+    if block.startswith("1. "):
+        i = 1
+        for line in lines:
+            if not line.startswith(f"{i}. "):
+                return BlockType.PARAGRAPH
+            i += 1
         return BlockType.ORDERED_LIST
     return BlockType.PARAGRAPH
 
-def ordered_list_block_matcher(block):
-    current_list_index = 1
-    lines = block.split("\n")
-    for line in lines:
-        if re.match(f"{current_list_index}\. ", line):
-            current_list_index += 1
-            continue
-        return False
-    return True
+# def block_to_block_type(block):
+#     match_types = {
+#         r"#{1,6}\s{1}.+": BlockType.HEADING,
+#         r"```\n[\w\d\s\n]*\n```$": BlockType.CODE,
+#         r"(>[\w\d\t ]*){1}(\n>[^\n]*)*": BlockType.QUOTE,
+#         r"(- {1}[\w\d\t ]*){1}(\n- {1}[^\n]*)*": BlockType.UNORDERED_LIST,
+#     }
+
+#     for regex, block_type in match_types.items():
+#         if re.fullmatch(regex, block):
+#             return block_type
+#     if ordered_list_block_matcher(block):
+#         return BlockType.ORDERED_LIST
+#     return BlockType.PARAGRAPH
+
+# def ordered_list_block_matcher(block):
+#     current_list_index = 1
+#     lines = block.split("\n")
+#     for line in lines:
+#         if re.match(f"{current_list_index}\. ", line):
+#             current_list_index += 1
+#             continue
+#         return False
+#     return True

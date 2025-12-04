@@ -17,7 +17,10 @@ class HTMLNode:
         return html_props
     
     def __repr__(self):
-        print(f"HTMLNode({self.tag}, {self.value}, {self.children}, {self.props})")
+        if not self.tag:
+            print(f"HTMLNode('None', {self.value}, {self.children}, {self.props})")
+        else:
+            print(f"HTMLNode({self.tag}, {self.value}, {self.children}, {self.props})")
 
 class LeafNode(HTMLNode):
     def __init__(self, tag, value, props = None):
