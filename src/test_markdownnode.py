@@ -1,6 +1,6 @@
 import unittest
 
-from markdownnode import markdown_to_blocks, BlockType, block_to_block_type
+from markdownnode import markdown_to_blocks, BlockType, block_to_block_type, extract_title
 
 class TestConvertMarkdownToBlocks(unittest.TestCase):
     def test_markdown_to_blocks(self):
@@ -186,3 +186,33 @@ class TestBlockToBlockType(unittest.TestCase):
         block = "1. I am\n2. an ordered\n4. list"
         block_type = block_to_block_type(block)
         self.assertEqual(block_type, BlockType.PARAGRAPH)
+
+class TestExtractTitle(unittest.TestCase):
+    def test_one_line(self):
+        markdown = "# Header1"
+        title = extract_title(markdown)
+        self.assertEqual(title, 'Header1')
+
+    def test_multi_line(self):
+        markdown = """
+Foo
+Foo 2
+# Header1
+"""
+        title = extract_title(markdown)
+        self.assertEqual(title, 'Header1')
+
+    def test_multiple_header_levels(self):
+        markdown = """
+# Header1
+## Header2
+### Header3
+#### Header4
+"""
+        title = extract_title(markdown)
+        self.assertEqual(title, 'Header1')
+
+    def test_exception_on_no_h1_header(self):
+        markdown = "## Header1"
+        with self.assertRaises(ValueError):
+            extract_title(markdown)

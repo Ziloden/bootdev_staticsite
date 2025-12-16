@@ -44,27 +44,9 @@ def block_to_block_type(block):
         return BlockType.ORDERED_LIST
     return BlockType.PARAGRAPH
 
-# def block_to_block_type(block):
-#     match_types = {
-#         r"#{1,6}\s{1}.+": BlockType.HEADING,
-#         r"```\n[\w\d\s\n]*\n```$": BlockType.CODE,
-#         r"(>[\w\d\t ]*){1}(\n>[^\n]*)*": BlockType.QUOTE,
-#         r"(- {1}[\w\d\t ]*){1}(\n- {1}[^\n]*)*": BlockType.UNORDERED_LIST,
-#     }
-
-#     for regex, block_type in match_types.items():
-#         if re.fullmatch(regex, block):
-#             return block_type
-#     if ordered_list_block_matcher(block):
-#         return BlockType.ORDERED_LIST
-#     return BlockType.PARAGRAPH
-
-# def ordered_list_block_matcher(block):
-#     current_list_index = 1
-#     lines = block.split("\n")
-#     for line in lines:
-#         if re.match(f"{current_list_index}\. ", line):
-#             current_list_index += 1
-#             continue
-#         return False
-#     return True
+def extract_title(markdown):
+    lines = markdown.split('\n')
+    for line in lines:
+        if re.match(r"# .+", line):
+            return(re.sub(r'^# ', '', line).strip())
+    raise ValueError('Provided markdown had no h1 header')
