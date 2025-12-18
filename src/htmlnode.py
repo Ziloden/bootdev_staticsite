@@ -17,17 +17,14 @@ class HTMLNode:
         return html_props
     
     def __repr__(self):
-        if not self.tag:
-            print(f"HTMLNode('None', {self.value}, {self.children}, {self.props})")
-        else:
-            print(f"HTMLNode({self.tag}, {self.value}, {self.children}, {self.props})")
+        print(f"HTMLNode({self.tag}, {self.value}, {self.children}, {self.props})")
 
 class LeafNode(HTMLNode):
     def __init__(self, tag, value, props = None):
         super().__init__(tag, value, None, props)
 
     def to_html(self):
-        if not self.value:
+        if self.value is None:
             raise ValueError("Missing \"value\" argument.")
         if self.tag is None:
             return self.value
@@ -46,4 +43,3 @@ class ParentNode(HTMLNode):
         for child in self.children:
             html_string += child.to_html()
         return f"<{self.tag}{self.props_to_html()}>{html_string}</{self.tag}>"        
-        

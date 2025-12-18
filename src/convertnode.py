@@ -8,6 +8,8 @@ from textnode import TextNode, TextType
 def text_node_to_html_node(text_node):
     if text_node.text_type not in TextType:
         raise ValueError(f"{text_node.text_type} not of type {TextType}")
+    if text_node.text is None:
+        raise ValueError("TextNode can not have text of value None")
     match text_node.text_type:
         case TextType.TEXT:
             return LeafNode(None, text_node.text)
@@ -20,7 +22,7 @@ def text_node_to_html_node(text_node):
         case TextType.LINK:
             return LeafNode("a", text_node.text, {"href":text_node.url})
         case TextType.IMAGE:
-            return LeafNode("img", None, {"src":text_node.url,"alt":text_node.text})
+            return LeafNode("img", "", {"src":text_node.url, "alt":text_node.text})
         case _:
             raise ValueError(f"{text_node.text_type} not a handled type.")
 
@@ -43,17 +45,12 @@ def text_to_text_nodes(text):
 
 def text_to_children(block):
     text_nodes = text_to_text_nodes(block)
-    # print(f"text_nodes: {text_nodes}")
     html_nodes = []
 
     for text_node in text_nodes:
-        # print(f"text_node: {text_node}")
         node = text_node_to_html_node(text_node)
-        # print(type(node))
-        # print(f"html_node: {node}")
         html_nodes.append(node)
-    
-    # print(f"html_nodes: {html_nodes}")
+
     return html_nodes
 
 def code_block_to_html_node(block):
@@ -98,7 +95,6 @@ def unordered_list_block_to_html_node(block):
 
 def block_to_html_nodes(block):
     block_type = block_to_block_type(block)
-    # print(f"block_type: {block_type}")
         
     match block_type:
         case BlockType.CODE:
@@ -118,10 +114,8 @@ def block_to_html_nodes(block):
 
 def markdown_to_html_node(markdown):
     blocks = markdown_to_blocks(markdown)
-    # print(f"blocks: {blocks}")
     children = []
     for block in blocks:
         children.append(block_to_html_nodes(block))
     html = ParentNode("div", children)
-    # print(f"html: {html.to_html()}")
     return html
