@@ -11,7 +11,7 @@ STATIC_CONTENT_PATH = './static'
 
 def main():
     copy_source(STATIC_CONTENT_PATH, PUBLIC_PATH)
-    generate_page('content/index.md', 'template.html', 'public/index.html')
+    generate_pages_recursive('content', 'template.html', 'public')
 
 def clear_dir(dir):
     shutil.rmtree(dir)
@@ -63,6 +63,19 @@ def generate_page(from_path, template_path, dest_path):
     with open(dest_path, 'w') as f:
         f.write(updated_template)
         f.close()
+
+def generate_pages_recursive(dir_path_content, template_path, dest_dir_path):
+    current_items = os.listdir(dir_path_content)
+    for item in current_items:
+        source_item_path = os.path.join(dir_path_content, item)
+        dest_item_path = os.path.join(dest_dir_path, item)
+        dest_item_basename, dest_item_ext = os.path.splitext(dest_item_path)
+        print(dest_item_basename)
+        print(dest_item_ext)
+        if os.path.isdir(source_item_path):
+            generate_pages_recursive(source_item_path, template_path, dest_item_path)
+        elif dest_item_ext == ".md":
+            generate_page(source_item_path, template_path, f"{dest_item_basename}.html")
 
     
 if __name__ == "__main__":
