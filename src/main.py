@@ -56,7 +56,7 @@ def generate_page(from_path, template_path, dest_path):
     title = extract_title(content)
     
     updated_template = template.replace('{{ Title }}', title)
-    updated_template = template.replace('{{ Content }}', html_content)
+    updated_template = updated_template.replace('{{ Content }}', html_content)
 
     if not os.path.exists(os.path.dirname(dest_path)):
         os.makedirs(os.path.dirname(dest_path))
