@@ -5,13 +5,17 @@ from convertnode import markdown_to_html_node
 
 import os
 import shutil
+import sys
 
-PUBLIC_PATH = './public'
+PUBLIC_PATH = './docs'
 STATIC_CONTENT_PATH = './static'
 
 def main():
+    basepath = "/"
+    if len(sys.argv) >= 2:
+        basepath = sys.argv[1]
     copy_source(STATIC_CONTENT_PATH, PUBLIC_PATH)
-    generate_pages_recursive('content', 'template.html', 'public')
+    generate_pages_recursive('./content', 'template.html', PUBLIC_PATH, basepath)
 
 def clear_dir(dir):
     shutil.rmtree(dir)
@@ -34,9 +38,11 @@ def copy_source(source, dest):
     if os.path.exists(dest):
         print(f"Found {dest}, clearing contents...")
         clear_dir(dest)
+    else:
+        os.mkdir(dest)
     recursive_copy(source, dest)
 
-def generate_page(from_path, template_path, dest_path):
+def generate_page(from_path, template_path, dest_path, basepath = '/'):
     content = ""
     html_content = ""
     template = ""
@@ -57,6 +63,8 @@ def generate_page(from_path, template_path, dest_path):
     
     updated_template = template.replace('{{ Title }}', title)
     updated_template = updated_template.replace('{{ Content }}', html_content)
+    updated_template = updated_template.replace('href=\"/', f"href=\"{basepath}")
+    updated_template = updated_template.replace('src=\"/', f"src=\"{basepath}")
 
     if not os.path.exists(os.path.dirname(dest_path)):
         os.makedirs(os.path.dirname(dest_path))
@@ -64,18 +72,16 @@ def generate_page(from_path, template_path, dest_path):
         f.write(updated_template)
         f.close()
 
-def generate_pages_recursive(dir_path_content, template_path, dest_dir_path):
+def generate_pages_recursive(dir_path_content, template_path, dest_dir_path, basepath = '/'):
     current_items = os.listdir(dir_path_content)
     for item in current_items:
         source_item_path = os.path.join(dir_path_content, item)
         dest_item_path = os.path.join(dest_dir_path, item)
         dest_item_basename, dest_item_ext = os.path.splitext(dest_item_path)
-        print(dest_item_basename)
-        print(dest_item_ext)
         if os.path.isdir(source_item_path):
-            generate_pages_recursive(source_item_path, template_path, dest_item_path)
+            generate_pages_recursive(source_item_path, template_path, dest_item_path, basepath)
         elif dest_item_ext == ".md":
-            generate_page(source_item_path, template_path, f"{dest_item_basename}.html")
+            generate_page(source_item_path, template_path, f"{dest_item_basename}.html", basepath)
 
     
 if __name__ == "__main__":
